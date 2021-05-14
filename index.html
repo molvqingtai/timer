@@ -10,11 +10,21 @@
     <script type="module">
       import { setup, clear, pause } from './dist/index.js'
 
-      const timer = setup(() => {}, 300, 600)
-
-      console.log(setup)
-      console.log(clear)
-      console.log(pause)
+      const startTime = Date.now()
+      setup(
+        (endTime) => {
+          console.log(endTime)
+        },
+        1000,
+        5000
+      )
+        .then((endTime) => {
+          console.log('endTime', endTime)
+          console.log('delay', endTime - startTime)
+        })
+        .catch((err) => {
+          console.log(err.message)
+        })
     </script>
   </body>
 </html>

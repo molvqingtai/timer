@@ -23,21 +23,20 @@
 // export const clear = (timer: Promise<number>) => {}
 
 class Timer {
-  private readonly tasks = new Set()
+  private readonly tasks = new Map()
   setup = async (func: Function, wait: number, delay: number): Promise<number> => {
     const timer = new Promise<number>((resolve, reject) => {
-      const startDelay = Date.now()
-      let startTime = startDelay
-      const task: FrameRequestCallback = () => {
+      const timing: FrameRequestCallback = () => {
         try {
+          const status = this.tasks.get(timer)
           const endTime = Date.now()
           cancelAnimationFrame(requestID)
-          if (endTime - startDelay < delay) {
-            if (endTime - startTime >= wait) {
+          if (endTime - status.startDelay < delay) {
+            if (endTime - status.startTime >= wait) {
               func(endTime)
-              startTime = endTime
+              this.tasks.set(timer, { ...status, startTime: endTime })
             }
-            requestID = requestAnimationFrame(task)
+            requestID = requestAnimationFrame(timing)
           } else {
             resolve(endTime)
           }
@@ -45,13 +44,31 @@ class Timer {
           reject(error)
         }
       }
-      let requestID = requestAnimationFrame(task)
+      let requestID = requestAnimationFrame(timing)
     })
-    this.tasks.add(timer)
+    this.tasks.set(timer, {
+      pause: false,
+      startDelay: Date.now(),
+      startTime: Date.now(),
+      wait,
+      delay
+    })
     return timer
   }
 
-  async pause(): Promise<number> {
+  pause = async (timer: Promise<number>): Promise<number> => {
+    // TODO: fix Object.is(this.testTimer, timer)
+    const status = this.tasks.get(timer)
+    console.log(status)
+    // console.log(this.tasks.get(timer))
+    // debugger
+
+    this.tasks.set(timer, { pause: true, ...status })
+
+    return Date.now()
+  }
+
+  async resume(): Promise<number> {
     return 1
   }
 
@@ -60,5 +77,5 @@ class Timer {
   }
 }
 
-export const { setup, pause, clear } = new Timer()
+export const { setup, clear, pause, resume } = new Timer()
 export default Timer

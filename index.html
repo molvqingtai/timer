@@ -8,23 +8,20 @@
   </head>
   <body>
     <script type="module">
-      import { setup, clear, pause } from './dist/index.js'
+      import { setup, clear, pause, resume } from './dist/index.js'
 
       const startTime = Date.now()
-      setup(
+      const timer = setup(
         (endTime) => {
           console.log(endTime)
         },
         1000,
-        5000
+        10000
       )
-        .then((endTime) => {
-          console.log('endTime', endTime)
-          console.log('delay', endTime - startTime)
-        })
-        .catch((err) => {
-          console.log(err.message)
-        })
+      setTimeout(() => {
+        console.log('pause')
+        pause(timer)
+      }, 5000)
     </script>
   </body>
 </html>

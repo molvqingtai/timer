@@ -24,7 +24,10 @@
 
 class Timer {
   private readonly tasks = new Map()
-  setup = async (func: Function, wait: number, delay: number): Promise<number> => {
+
+  // issues: https://github.com/typescript-eslint/typescript-eslint/issues/3387
+  // eslint-disable-next-line @typescript-eslint/promise-function-async
+  setup = (func: Function, wait: number, delay: number): Promise<number> => {
     const timer = new Promise<number>((resolve, reject) => {
       const timing: FrameRequestCallback = () => {
         try {
@@ -57,14 +60,9 @@ class Timer {
   }
 
   pause = async (timer: Promise<number>): Promise<number> => {
-    // TODO: fix Object.is(this.testTimer, timer)
     const status = this.tasks.get(timer)
     console.log(status)
-    // console.log(this.tasks.get(timer))
-    // debugger
-
     this.tasks.set(timer, { pause: true, ...status })
-
     return Date.now()
   }
 

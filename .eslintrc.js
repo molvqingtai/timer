@@ -12,16 +12,6 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
-    '@typescript-eslint/promise-function-async': [
-      'error',
-      {
-        allowedPromiseNames: ['Thenable'],
-        checkArrowFunctions: true,
-        checkFunctionDeclarations: true,
-        checkFunctionExpressions: true,
-        checkMethodDeclarations: true
-      }
-    ],
     'prettier/prettier': 'error'
   }
 }

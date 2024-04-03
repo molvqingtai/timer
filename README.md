@@ -21,26 +21,26 @@ import Timer from '@resreq/timer'
 
 const log = (time: number) => console.log('time:', time)
 
-  const timer = new Timer(log, {
-    delay: 1000,
-    immediate: true
-  })
-  
-  timer.on('start', (time) => {
-    console.log('start:', time)
-  })
-  timer.on('pause', (time) => {
-    console.log('pause:', time)
-  })
-  timer.on('stop', (time) => {
-    console.log('stop:', time)
-  })
-
-  timer.start()
-  setTimeout(() => timer.pause(), 1000)
-  setTimeout(() => timer.start(), 2000)
-  setTimeout(() => timer.stop(), 3000)
+const timer = new Timer(log, {
+  delay: 1000,
+  immediate: true
 })
+
+timer.on('start', (time) => {
+  console.log('start:', time)
+})
+timer.on('pause', (time) => {
+  console.log('pause:', time)
+})
+timer.on('stop', (time) => {
+  console.log('stop:', time)
+})
+
+timer.start()
+
+setTimeout(() => timer.pause(), 1000)
+setTimeout(() => timer.start(), 2000)
+setTimeout(() => timer.stop(), 3000)
 
 // => start: 1712160512855
 // => time: 1712160512858

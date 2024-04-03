@@ -16,15 +16,15 @@ export type TimerStatus = 'started' | 'paused' | 'stopped'
 export default class Timer {
   private startTime: number
   private pausedTime: number
-  private callback: TimerCallback
-  private immediate: boolean
+  private readonly callback: TimerCallback
+  private readonly immediate: boolean
   private requestId: number | null
   private limit: number
-  private initLimit: number
-  private delay: number
-  private includeAsyncTime: boolean
+  private readonly initLimit: number
+  private readonly delay: number
+  private readonly includeAsyncTime: boolean
   public status: TimerStatus
-  private eventHub: EventHub
+  private readonly eventHub: EventHub
 
   constructor(callback: TimerCallback, options?: TimerOptions) {
     this.startTime = 0
@@ -45,7 +45,9 @@ export default class Timer {
   }
 
   on(event: TimerEvent, listener: (time: number) => void) {
-    this.eventHub.on(event, () => listener(Date.now()))
+    this.eventHub.on(event, () => {
+      listener(Date.now())
+    })
   }
 
   async start() {
@@ -54,7 +56,9 @@ export default class Timer {
         this.status = 'started'
         this.eventHub.emit('start')
         this.startTime = performance.now() - this.pausedTime
-        this.requestId = requestAnimationFrame((time) => this.tick(time, this.immediate))
+        this.requestId = requestAnimationFrame((time) => {
+          this.tick(time, this.immediate)
+        })
       }
     }
   }
@@ -83,7 +87,7 @@ export default class Timer {
   private async tick(currentTime: number, immediate?: boolean) {
     const elapsedTime = currentTime - this.startTime
     if (this.limit > 0) {
-      if (immediate || elapsedTime >= this.delay) {
+      if (immediate ?? elapsedTime >= this.delay) {
         this.limit--
         if (this.includeAsyncTime) {
           await this.callback(Date.now())
@@ -93,7 +97,7 @@ export default class Timer {
         this.eventHub.emit('tick')
         this.startTime = performance.now()
       }
-      this.requestId && cancelAnimationFrame(this.requestId!)
+      this.requestId && cancelAnimationFrame(this.requestId)
       this.requestId = requestAnimationFrame(this.tick)
     } else {
       this.stop()

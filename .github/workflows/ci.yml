@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - run: pnpm install --ignore-scripts
+      - run: pnpm run lint
+      - run: pnpm run tsc
+  tests:
+    needs: linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - run: pnpm install --ignore-scripts
+      - run: pnpm run test

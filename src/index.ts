@@ -9,7 +9,7 @@ export interface TimerOptions {
   includeAsyncTime?: boolean
 }
 
-export type TimerEvent = 'start' | 'pause' | 'stop' | 'end' | 'tick'
+export type TimerEvent = 'start' | 'pause' | 'stop' | 'end' | 'tick' | 'error'
 
 export type TimerStatus = 'started' | 'paused' | 'stopped'
 
@@ -88,14 +88,19 @@ export default class Timer {
     const elapsedTime = currentTime - this.startTime
     if (this.limit > 0) {
       if (immediate ?? elapsedTime >= this.delay) {
-        this.limit--
-        if (this.includeAsyncTime) {
-          await this.callback(Date.now())
-        } else {
-          this.callback(Date.now())
+        try {
+          this.limit--
+          if (this.includeAsyncTime) {
+            await this.callback(Date.now())
+          } else {
+            this.callback(Date.now())
+          }
+          this.eventHub.emit('tick')
+          this.startTime = performance.now()
+        } catch (error) {
+          this.eventHub.emit('error', error)
+          throw error
         }
-        this.eventHub.emit('tick')
-        this.startTime = performance.now()
       }
       this.requestId && cancelAnimationFrame(this.requestId)
       this.requestId = requestAnimationFrame(this.tick)

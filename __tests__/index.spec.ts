@@ -60,6 +60,23 @@ describe('Test timer', () => {
       timer.stop()
       expect(callback).toHaveBeenCalled()
     })
+    test('should tick event', async () => {
+      const callback = vi.fn()
+      timer.on('tick', callback)
+      timer.start()
+      await sleep(200)
+      timer.stop()
+      expect(callback).toHaveBeenCalled()
+    })
+    test('should error event', async () => {
+      const callback = vi.fn(() => {
+        throw new Error('error')
+      })
+      timer.on('error', callback)
+      timer.start()
+      timer.stop()
+      expect(callback).not.toHaveBeenCalled()
+    })
   })
   describe('Test sync callback', () => {
     test('should call callback 3 times', async () => {

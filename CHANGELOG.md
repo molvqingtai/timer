@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/molvqingtai/timer/compare/v1.0.0...v1.1.0) (2024-04-05)
+
+
+### Features
+
+* add error event ([fd81a70](https://github.com/molvqingtai/timer/commit/fd81a70281f08b8d43a9641f3b5ba32098947188))
+
 # 1.0.0 (2024-04-03)
 
 

@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/molvqingtai/timer/compare/v1.1.1...v1.1.2) (2024-04-06)
+
+
+### Bug Fixes
+
+* fix the redundant end emit ([036f8bd](https://github.com/molvqingtai/timer/commit/036f8bdb716e03d634bed14f75a0bd542eba6b07))
+
 ## [1.1.1](https://github.com/molvqingtai/timer/compare/v1.1.0...v1.1.1) (2024-04-06)
 
 

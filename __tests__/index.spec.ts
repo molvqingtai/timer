@@ -25,19 +25,19 @@ describe('Test timer', () => {
   describe('Test event', () => {
     let timer: Timer
     beforeEach(() => {
-      timer = new Timer(vi.fn(), {
+      timer = new Timer(() => 'foobar', {
         limit: 3,
         delay: 50
       })
     })
-    test('should start event', async () => {
+    test('should emit start event', async () => {
       const callback = vi.fn()
       timer.on('start', callback)
       timer.start()
       timer.stop()
       expect(callback).toHaveBeenCalled()
     })
-    test('should pause event', async () => {
+    test('should emit pause event', async () => {
       const callback = vi.fn()
       timer.on('pause', callback)
       timer.start()
@@ -45,14 +45,14 @@ describe('Test timer', () => {
       timer.stop()
       expect(callback).toHaveBeenCalled()
     })
-    test('should stop event', async () => {
+    test('should emit stop event', async () => {
       const callback = vi.fn()
       timer.on('stop', callback)
       timer.start()
       timer.stop()
       expect(callback).toHaveBeenCalled()
     })
-    test('should end event', async () => {
+    test('should emit end event', async () => {
       const callback = vi.fn()
       timer.on('end', callback)
       timer.start()
@@ -60,24 +60,32 @@ describe('Test timer', () => {
       timer.stop()
       expect(callback).toHaveBeenCalled()
     })
-    test('should tick event', async () => {
+    test('should emit tick event', async () => {
       const callback = vi.fn()
       timer.on('tick', callback)
       timer.start()
-      await sleep(200)
+      await sleep(100)
       timer.stop()
-      expect(callback).toHaveBeenCalled()
+      expect(callback).toHaveBeenCalledWith('foobar')
     })
-    test('should error event', async () => {
-      const callback = vi.fn(() => {
-        throw new Error('error')
-      })
+    test('should emit error event', async () => {
+      const callback = vi.fn()
+      const timer = new Timer(
+        () => {
+          throw new Error('foobar')
+        },
+        {
+          limit: 1
+        }
+      )
       timer.on('error', callback)
       timer.start()
+      await sleep(100)
       timer.stop()
-      expect(callback).not.toHaveBeenCalled()
+      expect(callback).toHaveBeenCalledWith(expect.objectContaining({ message: 'foobar' }))
     })
   })
+
   describe('Test sync callback', () => {
     test('should call callback 3 times', async () => {
       const callback = vi.fn()

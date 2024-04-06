@@ -115,7 +115,6 @@ export default class Timer {
       }
     } else {
       this.stop()
-      this.eventHub.emit('end', Date.now())
     }
   }
 }

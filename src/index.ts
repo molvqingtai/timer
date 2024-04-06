@@ -92,29 +92,31 @@ export default class Timer {
   }
 
   private async tick(currentTime: number, immediate?: boolean) {
-    const elapsedTime = currentTime - this.startTime
-    if (this.limit > 0) {
-      try {
-        if (immediate ?? elapsedTime >= this.delay) {
-          this.limit--
-          if (this.includeAsyncTime) {
-            const data = await this.callback(Date.now())
-            this.eventHub.emit('tick', data)
-          } else {
-            const data = this.callback(Date.now())
-            this.eventHub.emit('tick', data)
+    if (this.status === 'started') {
+      const elapsedTime = currentTime - this.startTime
+      if (this.limit > 0) {
+        try {
+          if (immediate ?? elapsedTime >= this.delay) {
+            this.limit--
+            if (this.includeAsyncTime) {
+              const data = await this.callback(Date.now())
+              this.eventHub.emit('tick', data)
+            } else {
+              const data = this.callback(Date.now())
+              this.eventHub.emit('tick', data)
+            }
+            this.startTime = performance.now()
           }
+        } catch (error) {
           this.startTime = performance.now()
+          this.eventHub.emit('error', error)
+        } finally {
+          this.requestId && cancelAnimationFrame(this.requestId)
+          this.requestId = requestAnimationFrame(this.tick)
         }
-      } catch (error) {
-        this.startTime = performance.now()
-        this.eventHub.emit('error', error)
-      } finally {
-        this.requestId && cancelAnimationFrame(this.requestId)
-        this.requestId = requestAnimationFrame(this.tick)
+      } else {
+        this.stop()
       }
-    } else {
-      this.stop()
     }
   }
 }

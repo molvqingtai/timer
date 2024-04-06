@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/molvqingtai/timer/compare/v1.1.0...v1.1.1) (2024-04-06)
+
+
+### Performance Improvements
+
+* add emit error event ([d1e12d9](https://github.com/molvqingtai/timer/commit/d1e12d9c5de25422614a507b82c356b85921190d))
+
 # [1.1.0](https://github.com/molvqingtai/timer/compare/v1.0.0...v1.1.0) (2024-04-05)
 
 

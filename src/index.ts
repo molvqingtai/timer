@@ -1,6 +1,6 @@
 import EventHub from '@resreq/event-hub'
 
-type TimerCallback = (timer: number) => any | Promise<any>
+type TimerCallback = (time: number, timer: Timer) => any | Promise<any>
 
 export interface TimerListener {
   start: (time: number) => void
@@ -97,14 +97,14 @@ export default class Timer {
       if (this.limit > 0) {
         try {
           if (immediate ?? elapsedTime >= this.delay) {
-            this.limit--
             if (this.includeAsyncTime) {
-              const data = await this.callback(Date.now())
+              const data = await this.callback(Date.now(), this)
               this.eventHub.emit('tick', data)
             } else {
-              const data = this.callback(Date.now())
+              const data = this.callback(Date.now(), this)
               this.eventHub.emit('tick', data)
             }
+            this.limit--
             this.startTime = performance.now()
           }
         } catch (error) {

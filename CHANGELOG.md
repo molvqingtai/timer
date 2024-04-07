@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/molvqingtai/timer/compare/v1.1.3...v1.1.4) (2024-04-07)
+
+
+### Performance Improvements
+
+* callback return timer instance ([d7dc2e6](https://github.com/molvqingtai/timer/commit/d7dc2e6cec843bfbf15cb46108e21fcde6337856))
+
 ## [1.1.3](https://github.com/molvqingtai/timer/compare/v1.1.2...v1.1.3) (2024-04-06)
 
 

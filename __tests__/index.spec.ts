@@ -291,4 +291,16 @@ describe('Test timer', () => {
       expect(callback).toHaveBeenCalledTimes(0)
     })
   })
+  describe('Test use timer in Callback', () => {
+    test('should emit stop event', async () => {
+      const callback = vi.fn()
+      const timer = new Timer((_, timer: Timer) => {
+        timer.stop()
+      })
+      timer.start()
+      timer.on('stop', callback)
+      await sleep(0)
+      expect(callback).toHaveBeenCalled()
+    })
+  })
 })

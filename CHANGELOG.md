@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/molvqingtai/timer/compare/v1.1.2...v1.1.3) (2024-04-06)
+
+
+### Bug Fixes
+
+* fix unable to stop or stop ([8b017be](https://github.com/molvqingtai/timer/commit/8b017beab67dcef43389ab38e76188a6afea1c1c))
+
 ## [1.1.2](https://github.com/molvqingtai/timer/compare/v1.1.1...v1.1.2) (2024-04-06)
 
 

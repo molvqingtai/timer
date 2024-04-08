@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/molvqingtai/timer/compare/v1.1.4...v1.1.5) (2024-04-08)
+
+
+### Performance Improvements
+
+* add reset api ([7b3af66](https://github.com/molvqingtai/timer/commit/7b3af66eb712b2edfdb69d76429941fc2c2b0386))
+
 ## [1.1.4](https://github.com/molvqingtai/timer/compare/v1.1.3...v1.1.4) (2024-04-07)
 
 

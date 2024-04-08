@@ -18,7 +18,7 @@ export interface TimerOptions {
   includeAsyncTime?: boolean
 }
 
-export type TimerEvent = 'start' | 'pause' | 'stop' | 'end' | 'tick' | 'error'
+export type TimerEvent = 'start' | 'pause' | 'stop' | 'end' | 'tick' | 'error' | 'reset'
 
 export type TimerStatus = 'started' | 'paused' | 'stopped'
 
@@ -30,6 +30,7 @@ export default class Timer {
   private requestId: number | null
   private limit: number
   private readonly initLimit: number
+  private readonly originalLimit: number
   private readonly delay: number
   private readonly includeAsyncTime: boolean
   public status: TimerStatus
@@ -40,7 +41,7 @@ export default class Timer {
     this.pausedTime = 0
     this.callback = callback
     this.requestId = null
-    this.initLimit = this.limit = options?.limit ?? Infinity
+    this.initLimit = this.originalLimit = this.limit = options?.limit ?? Infinity
     this.delay = options?.delay ?? 0
     this.includeAsyncTime = options?.includeAsyncTime ?? false
     this.immediate = options?.immediate ?? false
@@ -89,6 +90,15 @@ export default class Timer {
       this.requestId = null
       this.pausedTime = performance.now() - this.startTime
     }
+  }
+
+  reset() {
+    this.eventHub.emit('reset', Date.now())
+    cancelAnimationFrame(this.requestId!)
+    this.limit = this.originalLimit
+    this.pausedTime = 0
+    this.status = 'stopped'
+    this.requestId = null
   }
 
   private async tick(currentTime: number, immediate?: boolean) {

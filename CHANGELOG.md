@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/molvqingtai/timer/compare/v1.1.5...v1.1.6) (2024-09-26)
+
+
+### Bug Fixes
+
+* pause time should be reset when stop ([739826c](https://github.com/molvqingtai/timer/commit/739826ca19b3c0e9e58fc3449eec0cb2c46bd70e))
+
 ## [1.1.5](https://github.com/molvqingtai/timer/compare/v1.1.4...v1.1.5) (2024-04-08)
 
 

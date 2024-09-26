@@ -75,6 +75,7 @@ export default class Timer {
     if (this.status === 'started' || this.status === 'paused') {
       this.status = 'stopped'
       this.eventHub.emit('stop', Date.now())
+      this.pausedTime = 0
       this.limit === 0 && this.eventHub.emit('end', Date.now())
       cancelAnimationFrame(this.requestId!)
       this.limit = this.initLimit

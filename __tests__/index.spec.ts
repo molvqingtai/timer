@@ -11,11 +11,11 @@ describe('Test timer', () => {
 
     test('Status should work properly', async () => {
       timer.start()
-      expect(timer.status).toBe('started')
+      expect(timer.status).toBe('running')
       timer.pause()
       expect(timer.status).toBe('paused')
       timer.start()
-      expect(timer.status).toBe('started')
+      expect(timer.status).toBe('running')
       timer.pause()
       expect(timer.status).toBe('paused')
       timer.stop()
@@ -27,7 +27,7 @@ describe('Test timer', () => {
     beforeEach(() => {
       timer = new Timer(() => 'foobar', {
         limit: 3,
-        delay: 50
+        interval: 50
       })
     })
     test('should emit start event', async () => {
@@ -100,7 +100,7 @@ describe('Test timer', () => {
       const callback = vi.fn()
       const timer = new Timer(callback, {
         limit: 3,
-        delay: 100
+        interval: 100
       })
       timer.start()
       await sleep(250)
@@ -112,7 +112,7 @@ describe('Test timer', () => {
       const callback = vi.fn()
       const timer = new Timer(callback, {
         limit: 3,
-        delay: 100
+        interval: 100
       })
       timer.start()
       await sleep(350)
@@ -123,7 +123,7 @@ describe('Test timer', () => {
       const callback = vi.fn()
       const timer = new Timer(callback, {
         limit: 3,
-        delay: 100
+        interval: 100
       })
       timer.start()
       await sleep(250)
@@ -135,11 +135,11 @@ describe('Test timer', () => {
       const callback = vi.fn()
       const timer = new Timer(callback, {
         limit: 5,
-        delay: 100
+        interval: 100
       })
       timer.start()
       await sleep(150)
-      // delay 100 < sleep 150 = +1 times
+      // interval 100 < sleep 150 = +1 times
       expect(callback).toHaveBeenCalledTimes(1)
       // last = 50
       timer.pause()
@@ -150,24 +150,24 @@ describe('Test timer', () => {
       timer.start()
       await sleep(75)
       timer.stop()
-      // delay < (last 50 + sleep 75)= +1 times
+      // interval < (last 50 + sleep 75)= +1 times
       expect(callback).toHaveBeenCalledTimes(2)
     })
 
     test('should call callback immediately', async () => {
       const callback = vi.fn()
       const timer = new Timer(callback, {
-        delay: 100,
+        interval: 100,
         immediate: true
       })
       timer.start()
-      await sleep(0)
+      await sleep(50)
       expect(callback).toHaveBeenCalledTimes(1)
     })
     test('should call callback reset', async () => {
       const callback = vi.fn()
       const timer = new Timer(callback, {
-        delay: 100,
+        interval: 100,
         limit: 1,
         immediate: false
       })
@@ -204,7 +204,7 @@ describe('Test timer', () => {
       }
       const timer = new Timer(promise, {
         limit: 3,
-        delay: 100,
+        interval: 100,
         includeAsyncTime: true
       })
       timer.start()
@@ -221,7 +221,7 @@ describe('Test timer', () => {
       }
       const timer = new Timer(promise, {
         limit: 3,
-        delay: 100,
+        interval: 100,
         includeAsyncTime: true
       })
       timer.start()
@@ -237,7 +237,7 @@ describe('Test timer', () => {
       }
       const timer = new Timer(promise, {
         limit: 3,
-        delay: 100,
+        interval: 100,
         includeAsyncTime: true
       })
       timer.start()
@@ -254,24 +254,24 @@ describe('Test timer', () => {
       }
       const timer = new Timer(promise, {
         limit: 5,
-        // delay = delay 100 + promise 100 = 200
-        delay: 100
+        // interval = interval 100 + promise 100 = 200
+        interval: 100
       })
       timer.start()
       await sleep(150)
-      // delay 200 > sleep 150 = +0 times
+      // interval 200 > sleep 150 = +0 times
       expect(callback).toHaveBeenCalledTimes(0)
       // Time is paused, but promise continues
       timer.pause()
       await sleep(100)
-      // delay 200 < (sleep 150 + sleep 100) = +1 times
+      // interval 200 < (sleep 150 + sleep 100) = +1 times
       // last = 50
       expect(callback).toHaveBeenCalledTimes(1)
       // inherit last 50
       timer.start()
       await sleep(180)
       timer.stop()
-      // delay 200 < (last 50 + sleep 180) = +1 times
+      // interval 200 < (last 50 + sleep 180) = +1 times
       expect(callback).toHaveBeenCalledTimes(2)
     })
 
@@ -281,12 +281,12 @@ describe('Test timer', () => {
         Promise.resolve(callback())
       }
       const timer = new Timer(promise, {
-        delay: 100,
+        interval: 100,
         immediate: true,
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(0)
+      await sleep(50)
       expect(callback).toHaveBeenCalledTimes(1)
     })
 
@@ -296,12 +296,12 @@ describe('Test timer', () => {
         Promise.resolve(callback())
       }
       const timer = new Timer(promise, {
-        delay: 100,
+        interval: 100,
         immediate: false,
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(0)
+      await sleep(50)
       expect(callback).toHaveBeenCalledTimes(0)
     })
 
@@ -311,7 +311,7 @@ describe('Test timer', () => {
         Promise.resolve(callback())
       }
       const timer = new Timer(promise, {
-        delay: 100,
+        interval: 100,
         limit: 1,
         immediate: false,
         includeAsyncTime: true
@@ -327,13 +327,17 @@ describe('Test timer', () => {
   describe('Test use timer in Callback', () => {
     test('should emit stop event', async () => {
       const callback = vi.fn()
-      const timer = new Timer((_, timer: Timer) => {
-        timer.stop()
-      })
-      timer.start()
+      const timer = new Timer(
+        (_, timer: Timer) => {
+          timer.stop()
+        },
+        { limit: 1 }
+      )
       timer.on('stop', callback)
-      await sleep(0)
-      expect(callback).toHaveBeenCalled()
+
+      timer.start()
+      await sleep(100)
+      expect(callback).toHaveBeenCalledTimes(1)
     })
   })
 })

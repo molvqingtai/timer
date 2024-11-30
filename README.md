@@ -47,7 +47,8 @@ setTimeout(() => timer.stop(), 3000)
 ```
 
 **Adapter**
-SetTimeout is used by default, and custom adapters are supported, such as requestAnimationFrame, cancelIdleCallback, etc...
+
+`setTimeout` is used by default, and custom adapters are supported, such as `requestAnimationFrame`, `cancelIdleCallback`, etc...
 
 ```typescript
 const timer = new Timer(log, {

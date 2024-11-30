@@ -11,7 +11,7 @@ jobs:
   linter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: lts/*
@@ -20,12 +20,12 @@ jobs:
           version: latest
       - run: pnpm install --ignore-scripts
       - run: pnpm run lint
-      - run: pnpm run tsc
+      - run: pnpm run check
   tests:
     needs: linter
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: lts/*

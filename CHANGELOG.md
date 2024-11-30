@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/molvqingtai/timer/compare/v1.1.6...v1.2.0) (2024-11-30)
+
+
+### Bug Fixes
+
+* this may be missing ([13819fa](https://github.com/molvqingtai/timer/commit/13819fafb5d6224a8f7a630f2b3399a681775745))
+
+
+### Features
+
+* support adapter ([067b998](https://github.com/molvqingtai/timer/commit/067b9981a864dc92c652ea8d92e832b08835ea07))
+
 ## [1.1.6](https://github.com/molvqingtai/timer/compare/v1.1.5...v1.1.6) (2024-09-26)
 
 

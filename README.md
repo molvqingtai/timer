@@ -1,18 +1,14 @@
 # Timer
 
-[![version](https://img.shields.io/github/v/release/molvqingtai/timer)](https://www.npmjs.com/package/timer) [![workflow](https://github.com/molvqingtai/timer/actions/workflows/ci.yml/badge.svg)](https://github.com/molvqingtai/timer/actions) [![download](https://img.shields.io/npm/dt/@resreq/timer)](https://www.npmjs.com/package/@resreq/timer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![version](https://img.shields.io/github/v/release/molvqingtai/timer)](https://www.npmjs.com/package/@resreq/timer) [![workflow](https://github.com/molvqingtai/timer/actions/workflows/ci.yml/badge.svg)](https://github.com/molvqingtai/timer/actions) [![download](https://img.shields.io/npm/dt/@resreq/timer)](https://www.npmjs.com/package/@resreq/timer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-⏰ Short and sweet timer based on requestAnimationFrame API
-
-
+⏰ Short and sweet timer
 
 ## Install
 
 ```shell
 npm install @resreq/timer
 ```
-
-
 
 ## Usage
 
@@ -22,7 +18,7 @@ import Timer from '@resreq/timer'
 const log = (time: number) => console.log('time:', time)
 
 const timer = new Timer(log, {
-  delay: 1000,
+  interval: 1000,
   immediate: true
 })
 
@@ -50,7 +46,17 @@ setTimeout(() => timer.stop(), 3000)
 // => stop: 1712160515855
 ```
 
+**Adapter**
+SetTimeout is used by default, and custom adapters are supported, such as requestAnimationFrame, cancelIdleCallback, etc...
 
+```typescript
+const timer = new Timer(log, {
+  adapter: {
+    setTimer: globalThis.requestAnimationFrame,
+    cancelTimer: globalThis.cancelAnimationFrame
+  }
+})
+```
 
 ## LICENSE
 

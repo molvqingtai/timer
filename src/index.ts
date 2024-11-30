@@ -11,38 +11,45 @@ export interface TimerListener {
   tick: (data: any) => void
 }
 
+export interface TimerAdapter {
+  setTimer: (callback: () => void) => number
+  cancelTimer: (timerId: number) => void
+}
+
 export interface TimerOptions {
   limit?: number
-  delay?: number
+  interval?: number
   immediate?: boolean
   includeAsyncTime?: boolean
+  adapter?: TimerAdapter
 }
 
 export type TimerEvent = 'start' | 'pause' | 'stop' | 'end' | 'tick' | 'error' | 'reset'
 
-export type TimerStatus = 'started' | 'paused' | 'stopped'
+export type TimerStatus = 'running' | 'paused' | 'stopped'
 
 export default class Timer {
   private startTime: number
   private pausedTime: number
   private readonly callback: TimerCallback
   private readonly immediate: boolean
-  private requestId: number | null
+  private timerId: number | null
   private limit: number
   private readonly initLimit: number
   private readonly originalLimit: number
-  private readonly delay: number
+  private readonly interval: number
   private readonly includeAsyncTime: boolean
   public status: TimerStatus
   private readonly eventHub: EventHub
+  readonly adapter: TimerAdapter
 
   constructor(callback: TimerCallback, options?: TimerOptions) {
     this.startTime = 0
     this.pausedTime = 0
     this.callback = callback
-    this.requestId = null
+    this.timerId = null
     this.initLimit = this.originalLimit = this.limit = options?.limit ?? Infinity
-    this.delay = options?.delay ?? 0
+    this.interval = options?.interval ?? 0
     this.includeAsyncTime = options?.includeAsyncTime ?? false
     this.immediate = options?.immediate ?? false
     this.on = this.on.bind(this)
@@ -52,6 +59,10 @@ export default class Timer {
     this.tick = this.tick.bind(this)
     this.status = 'stopped'
     this.eventHub = new EventHub()
+    this.adapter = options?.adapter ?? {
+      setTimer: globalThis.setTimeout,
+      cancelTimer: globalThis.clearTimeout
+    }
   }
 
   on<T extends keyof TimerListener>(event: T, listener: TimerListener[T]) {
@@ -61,53 +72,53 @@ export default class Timer {
   async start() {
     if (this.status === 'stopped' || this.status === 'paused') {
       if (this.limit > 0) {
-        this.status = 'started'
+        this.status = 'running'
         this.eventHub.emit('start', Date.now())
-        this.startTime = performance.now() - this.pausedTime
-        this.requestId = requestAnimationFrame((time) => {
-          this.tick(time, this.immediate)
+        this.startTime = Date.now() - this.pausedTime
+        this.timerId = this.adapter.setTimer(() => {
+          this.tick(Date.now(), this.immediate)
         })
       }
     }
   }
 
   stop() {
-    if (this.status === 'started' || this.status === 'paused') {
+    if (this.status === 'running' || this.status === 'paused') {
       this.status = 'stopped'
       this.eventHub.emit('stop', Date.now())
       this.pausedTime = 0
       this.limit === 0 && this.eventHub.emit('end', Date.now())
-      cancelAnimationFrame(this.requestId!)
+      this.adapter.cancelTimer(this.timerId!)
       this.limit = this.initLimit
-      this.requestId = null
+      this.timerId = null
     }
   }
 
   pause() {
-    if (this.status === 'started') {
+    if (this.status === 'running') {
       this.status = 'paused'
       this.eventHub.emit('pause', Date.now())
-      cancelAnimationFrame(this.requestId!)
-      this.requestId = null
-      this.pausedTime = performance.now() - this.startTime
+      this.adapter.cancelTimer(this.timerId!)
+      this.timerId = null
+      this.pausedTime = Date.now() - this.startTime
     }
   }
 
   reset() {
     this.eventHub.emit('reset', Date.now())
-    cancelAnimationFrame(this.requestId!)
+    this.adapter.cancelTimer(this.timerId!)
     this.limit = this.originalLimit
     this.pausedTime = 0
     this.status = 'stopped'
-    this.requestId = null
+    this.timerId = null
   }
 
   private async tick(currentTime: number, immediate?: boolean) {
-    if (this.status === 'started') {
+    if (this.status === 'running') {
       const elapsedTime = currentTime - this.startTime
       if (this.limit > 0) {
         try {
-          if (immediate ?? elapsedTime >= this.delay) {
+          if (immediate ?? elapsedTime >= this.interval) {
             if (this.includeAsyncTime) {
               const data = await this.callback(Date.now(), this)
               this.eventHub.emit('tick', data)
@@ -116,14 +127,16 @@ export default class Timer {
               this.eventHub.emit('tick', data)
             }
             this.limit--
-            this.startTime = performance.now()
+            this.startTime = Date.now()
           }
         } catch (error) {
-          this.startTime = performance.now()
+          this.startTime = Date.now()
           this.eventHub.emit('error', error)
         } finally {
-          this.requestId && cancelAnimationFrame(this.requestId)
-          this.requestId = requestAnimationFrame(this.tick)
+          this.timerId && this.adapter.cancelTimer(this.timerId)
+          this.timerId = this.adapter.setTimer(() => {
+            this.tick(Date.now())
+          })
         }
       } else {
         this.stop()

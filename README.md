@@ -52,8 +52,8 @@ SetTimeout is used by default, and custom adapters are supported, such as reques
 ```typescript
 const timer = new Timer(log, {
   adapter: {
-    setTimer: globalThis.requestAnimationFrame,
-    cancelTimer: globalThis.cancelAnimationFrame
+    setTimer: globalThis.requestAnimationFrame.bind(globalThis),
+    cancelTimer: globalThis.cancelAnimationFrame.bind(globalThis)
   }
 })
 ```

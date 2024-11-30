@@ -161,7 +161,7 @@ describe('Test timer', () => {
         immediate: true
       })
       timer.start()
-      await sleep(0)
+      await sleep(50)
       expect(callback).toHaveBeenCalledTimes(1)
     })
     test('should call callback reset', async () => {
@@ -286,7 +286,7 @@ describe('Test timer', () => {
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(0)
+      await sleep(50)
       expect(callback).toHaveBeenCalledTimes(1)
     })
 
@@ -301,7 +301,7 @@ describe('Test timer', () => {
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(0)
+      await sleep(50)
       expect(callback).toHaveBeenCalledTimes(0)
     })
 

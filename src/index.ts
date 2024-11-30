@@ -60,8 +60,8 @@ export default class Timer {
     this.status = 'stopped'
     this.eventHub = new EventHub()
     this.adapter = options?.adapter ?? {
-      setTimer: globalThis.setTimeout,
-      cancelTimer: globalThis.clearTimeout
+      setTimer: globalThis.setTimeout.bind(globalThis),
+      cancelTimer: globalThis.clearTimeout.bind(globalThis)
     }
   }
 

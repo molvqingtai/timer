@@ -1,6 +1,6 @@
 {
   "name": "@resreq/timer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "⏰ Short and sweet timer.",
   "type": "module",
   "main": "dist/index.js",

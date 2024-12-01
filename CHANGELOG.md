@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/molvqingtai/timer/compare/v1.2.0...v1.2.1) (2024-12-01)
+
+
+### Performance Improvements
+
+* delete reset api ([3d93adb](https://github.com/molvqingtai/timer/commit/3d93adb3f8e37076d52f4d7591670412b4cdb72c))
+
 # [1.2.0](https://github.com/molvqingtai/timer/compare/v1.1.6...v1.2.0) (2024-11-30)
 
 

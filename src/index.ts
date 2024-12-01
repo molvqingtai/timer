@@ -24,7 +24,7 @@ export interface TimerOptions {
   adapter?: TimerAdapter
 }
 
-export type TimerEvent = 'start' | 'pause' | 'stop' | 'end' | 'tick' | 'error' | 'reset'
+export type TimerEvent = 'start' | 'pause' | 'stop' | 'end' | 'tick' | 'error'
 
 export type TimerStatus = 'running' | 'paused' | 'stopped'
 
@@ -41,7 +41,7 @@ export default class Timer {
   private readonly includeAsyncTime: boolean
   public status: TimerStatus
   private readonly eventHub: EventHub
-  readonly adapter: TimerAdapter
+  private readonly adapter: TimerAdapter
 
   constructor(callback: TimerCallback, options?: TimerOptions) {
     this.startTime = 0
@@ -69,7 +69,7 @@ export default class Timer {
     this.eventHub.on(event, listener)
   }
 
-  async start() {
+  start() {
     if (this.status === 'stopped' || this.status === 'paused') {
       if (this.limit > 0) {
         this.status = 'running'
@@ -89,7 +89,7 @@ export default class Timer {
       this.pausedTime = 0
       this.limit === 0 && this.eventHub.emit('end', Date.now())
       this.adapter.cancelTimer(this.timerId!)
-      this.limit = this.initLimit
+      this.limit = this.originalLimit
       this.timerId = null
     }
   }
@@ -102,15 +102,6 @@ export default class Timer {
       this.timerId = null
       this.pausedTime = Date.now() - this.startTime
     }
-  }
-
-  reset() {
-    this.eventHub.emit('reset', Date.now())
-    this.adapter.cancelTimer(this.timerId!)
-    this.limit = this.originalLimit
-    this.pausedTime = 0
-    this.status = 'stopped'
-    this.timerId = null
   }
 
   private async tick(currentTime: number, immediate?: boolean) {

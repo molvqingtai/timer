@@ -164,20 +164,6 @@ describe('Test timer', () => {
       await sleep(50)
       expect(callback).toHaveBeenCalledTimes(1)
     })
-    test('should call callback reset', async () => {
-      const callback = vi.fn()
-      const timer = new Timer(callback, {
-        interval: 100,
-        limit: 1,
-        immediate: false
-      })
-      timer.start()
-      await sleep(150)
-      timer.reset()
-      timer.start()
-      await sleep(150)
-      expect(callback).toHaveBeenCalledTimes(2)
-    })
   })
 
   describe('Test async callback', () => {
@@ -303,25 +289,6 @@ describe('Test timer', () => {
       timer.start()
       await sleep(50)
       expect(callback).toHaveBeenCalledTimes(0)
-    })
-
-    test('should call async callback reset', async () => {
-      const callback = vi.fn()
-      const promise = async () => {
-        Promise.resolve(callback())
-      }
-      const timer = new Timer(promise, {
-        interval: 100,
-        limit: 1,
-        immediate: false,
-        includeAsyncTime: true
-      })
-      timer.start()
-      await sleep(150)
-      timer.reset()
-      timer.start()
-      await sleep(150)
-      expect(callback).toHaveBeenCalledTimes(2)
     })
   })
   describe('Test use timer in Callback', () => {

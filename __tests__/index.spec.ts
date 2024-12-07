@@ -1,8 +1,14 @@
-import { test, describe, expect, beforeEach, vi } from 'vitest'
+import { test, describe, expect, beforeEach, vi, afterEach } from 'vitest'
 import Timer from '../src'
 import { sleep } from './utils'
 
 describe('Test timer', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
   describe('Test methods', () => {
     let timer: Timer
     beforeEach(() => {
@@ -56,7 +62,7 @@ describe('Test timer', () => {
       const callback = vi.fn()
       timer.on('end', callback)
       timer.start()
-      await sleep(200)
+      await vi.advanceTimersByTimeAsync(200)
       timer.stop()
       expect(callback).toHaveBeenCalled()
     })
@@ -64,7 +70,7 @@ describe('Test timer', () => {
       const callback = vi.fn()
       timer.on('tick', callback)
       timer.start()
-      await sleep(100)
+      await vi.advanceTimersByTimeAsync(100)
       timer.stop()
       expect(callback).toHaveBeenCalledWith('foobar')
     })
@@ -80,7 +86,7 @@ describe('Test timer', () => {
       )
       timer.on('error', callback)
       timer.start()
-      await sleep(100)
+      await vi.advanceTimersByTimeAsync(100)
       timer.stop()
       expect(callback).toHaveBeenCalledWith(expect.objectContaining({ message: 'foobar' }))
     })
@@ -93,7 +99,7 @@ describe('Test timer', () => {
         limit: 3
       })
       timer.start()
-      await sleep(100)
+      await vi.advanceTimersByTimeAsync(100)
       expect(callback).toHaveBeenCalledTimes(3)
     })
     test('should call callback 2 times and stop', async () => {
@@ -103,7 +109,7 @@ describe('Test timer', () => {
         interval: 100
       })
       timer.start()
-      await sleep(250)
+      await vi.advanceTimersByTimeAsync(250)
       timer.stop()
       expect(callback).toHaveBeenCalledTimes(2)
     })
@@ -115,7 +121,7 @@ describe('Test timer', () => {
         interval: 100
       })
       timer.start()
-      await sleep(350)
+      await vi.advanceTimersByTimeAsync(350)
       expect(callback).toHaveBeenCalledTimes(3)
     })
 
@@ -126,7 +132,7 @@ describe('Test timer', () => {
         interval: 100
       })
       timer.start()
-      await sleep(250)
+      await vi.advanceTimersByTimeAsync(250)
       timer.pause()
       expect(callback).toHaveBeenCalledTimes(2)
     })
@@ -138,19 +144,19 @@ describe('Test timer', () => {
         interval: 100
       })
       timer.start()
-      await sleep(150)
-      // interval 100 < sleep 150 = +1 times
+      await vi.advanceTimersByTimeAsync(150)
+      // interval 100 < vi.advanceTimersByTimeAsync 150 = +1 times
       expect(callback).toHaveBeenCalledTimes(1)
       // last = 50
       timer.pause()
-      await sleep(100)
+      await vi.advanceTimersByTimeAsync(100)
       // lat = 50
       expect(callback).toHaveBeenCalledTimes(1)
       // inherit last 50
       timer.start()
-      await sleep(75)
+      await vi.advanceTimersByTimeAsync(75)
       timer.stop()
-      // interval < (last 50 + sleep 75)= +1 times
+      // interval < (last 50 + vi.advanceTimersByTimeAsync 75)= +1 times
       expect(callback).toHaveBeenCalledTimes(2)
     })
 
@@ -161,7 +167,7 @@ describe('Test timer', () => {
         immediate: true
       })
       timer.start()
-      await sleep(50)
+      await vi.advanceTimersByTimeAsync(50)
       expect(callback).toHaveBeenCalledTimes(1)
     })
   })
@@ -178,11 +184,11 @@ describe('Test timer', () => {
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(100)
+      await vi.advanceTimersByTimeAsync(100)
       expect(callback).toHaveBeenCalledTimes(3)
     })
 
-    test('should call async callback 2 times and stop', async () => {
+    test('should call async callback 1 times and stop', async () => {
       const callback = vi.fn()
       const promise = async () => {
         await sleep(100)
@@ -194,7 +200,7 @@ describe('Test timer', () => {
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(250)
+      await vi.advanceTimersByTimeAsync(250)
       timer.stop()
       expect(callback).toHaveBeenCalledTimes(1)
     })
@@ -211,7 +217,7 @@ describe('Test timer', () => {
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(650)
+      await vi.advanceTimersByTimeAsync(650)
       expect(callback).toHaveBeenCalledTimes(3)
     })
 
@@ -227,7 +233,7 @@ describe('Test timer', () => {
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(250)
+      await vi.advanceTimersByTimeAsync(250)
       timer.pause()
       expect(callback).toHaveBeenCalledTimes(1)
     })
@@ -244,20 +250,20 @@ describe('Test timer', () => {
         interval: 100
       })
       timer.start()
-      await sleep(150)
-      // interval 200 > sleep 150 = +0 times
+      await vi.advanceTimersByTimeAsync(150)
+      // interval 200 > vi.advanceTimersByTimeAsync 150 = +0 times
       expect(callback).toHaveBeenCalledTimes(0)
       // Time is paused, but promise continues
       timer.pause()
-      await sleep(100)
-      // interval 200 < (sleep 150 + sleep 100) = +1 times
+      await vi.advanceTimersByTimeAsync(100)
+      // interval 200 < (vi.advanceTimersByTimeAsync 150 + vi.advanceTimersByTimeAsync 100) = +1 times
       // last = 50
       expect(callback).toHaveBeenCalledTimes(1)
       // inherit last 50
       timer.start()
-      await sleep(180)
+      await vi.advanceTimersByTimeAsync(180)
       timer.stop()
-      // interval 200 < (last 50 + sleep 180) = +1 times
+      // interval 200 < (last 50 + vi.advanceTimersByTimeAsync 180) = +1 times
       expect(callback).toHaveBeenCalledTimes(2)
     })
 
@@ -272,7 +278,7 @@ describe('Test timer', () => {
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(50)
+      await vi.advanceTimersByTimeAsync(50)
       expect(callback).toHaveBeenCalledTimes(1)
     })
 
@@ -287,7 +293,7 @@ describe('Test timer', () => {
         includeAsyncTime: true
       })
       timer.start()
-      await sleep(50)
+      await vi.advanceTimersByTimeAsync(50)
       expect(callback).toHaveBeenCalledTimes(0)
     })
   })
@@ -303,7 +309,7 @@ describe('Test timer', () => {
       timer.on('stop', callback)
 
       timer.start()
-      await sleep(100)
+      await vi.advanceTimersByTimeAsync(100)
       expect(callback).toHaveBeenCalledTimes(1)
     })
   })

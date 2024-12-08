@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/molvqingtai/timer/compare/v1.2.1...v1.3.0) (2024-12-08)
+
+
+### Features
+
+* add off api ([cfe75d7](https://github.com/molvqingtai/timer/commit/cfe75d7a6017cdcc24f39badf924d28d2814761a))
+
 ## [1.2.1](https://github.com/molvqingtai/timer/compare/v1.2.0...v1.2.1) (2024-12-01)
 
 

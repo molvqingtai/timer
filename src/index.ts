@@ -69,6 +69,10 @@ export default class Timer {
     this.eventHub.on(event, listener)
   }
 
+  off<T extends keyof TimerListener>(event?: T | T[], listener?: TimerListener[T]) {
+    this.eventHub.off(event, listener)
+  }
+
   start() {
     if (this.status === 'stopped' || this.status === 'paused') {
       if (this.limit > 0) {

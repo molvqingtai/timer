@@ -28,7 +28,7 @@ describe('Test timer', () => {
       expect(timer.status).toBe('stopped')
     })
   })
-  describe('Test event', () => {
+  describe('Test on event', () => {
     let timer: Timer
     beforeEach(() => {
       timer = new Timer(() => 'foobar', {
@@ -89,6 +89,77 @@ describe('Test timer', () => {
       await vi.advanceTimersByTimeAsync(100)
       timer.stop()
       expect(callback).toHaveBeenCalledWith(expect.objectContaining({ message: 'foobar' }))
+    })
+  })
+
+  describe('Test off event', () => {
+    let timer: Timer
+    beforeEach(() => {
+      timer = new Timer(() => 'foobar', {
+        limit: 3,
+        interval: 50
+      })
+    })
+
+    test('should not emit start event after off', async () => {
+      const callback = vi.fn()
+      timer.on('start', callback)
+      timer.off('start')
+      timer.start()
+      timer.stop()
+      expect(callback).not.toHaveBeenCalled()
+    })
+
+    test('should not emit pause event after off', async () => {
+      const callback = vi.fn()
+      timer.on('pause', callback)
+      timer.off('pause')
+      timer.start()
+      timer.pause()
+      timer.stop()
+      expect(callback).not.toHaveBeenCalled()
+    })
+
+    test('should not emit stop event after off', async () => {
+      const callback = vi.fn()
+      timer.on('stop', callback)
+      timer.off('stop')
+      timer.start()
+      timer.stop()
+      expect(callback).not.toHaveBeenCalled()
+    })
+
+    test('should not emit end event after off', async () => {
+      const callback = vi.fn()
+      timer.on('end', callback)
+      timer.off('end')
+      timer.start()
+      await vi.advanceTimersByTimeAsync(200)
+      timer.stop()
+      expect(callback).not.toHaveBeenCalled()
+    })
+
+    test('should not emit tick event after off', async () => {
+      const callback = vi.fn()
+      timer.on('tick', callback)
+      timer.off('tick')
+      timer.start()
+      await vi.advanceTimersByTimeAsync(100)
+      timer.stop()
+      expect(callback).not.toHaveBeenCalled()
+    })
+
+    test('should not emit error event after off', async () => {
+      const callback = vi.fn()
+      const timer = new Timer(() => {
+        throw new Error()
+      })
+      timer.on('error', callback)
+      timer.off('error')
+      timer.start()
+      await vi.advanceTimersByTimeAsync(200)
+      timer.stop()
+      expect(callback).not.toHaveBeenCalled()
     })
   })
 

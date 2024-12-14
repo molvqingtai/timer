@@ -112,8 +112,8 @@ export default class Timer {
     if (this.status === 'running') {
       const elapsedTime = currentTime - this.startTime
       if (this.limit > 0) {
-        try {
-          if (immediate ?? elapsedTime >= this.interval) {
+        if (immediate ?? elapsedTime >= this.interval) {
+          try {
             if (this.includeAsyncTime) {
               const data = await this.callback(Date.now(), this)
               this.eventHub.emit('tick', data)
@@ -121,18 +121,17 @@ export default class Timer {
               const data = this.callback(Date.now(), this)
               this.eventHub.emit('tick', data)
             }
+          } catch (error) {
+            this.eventHub.emit('error', error)
+          } finally {
             this.limit--
             this.startTime = Date.now()
           }
-        } catch (error) {
-          this.startTime = Date.now()
-          this.eventHub.emit('error', error)
-        } finally {
-          this.timerId && this.adapter.cancelTimer(this.timerId)
-          this.timerId = this.adapter.setTimer(() => {
-            this.tick(Date.now())
-          })
         }
+        this.timerId && this.adapter.cancelTimer(this.timerId)
+        this.timerId = this.adapter.setTimer(() => {
+          this.tick(Date.now())
+        })
       } else {
         this.stop()
       }

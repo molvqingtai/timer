@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/molvqingtai/timer/compare/v1.3.0...v1.3.1) (2024-12-14)
+
+
+### Bug Fixes
+
+* loop triggers error event ([3dcaa5d](https://github.com/molvqingtai/timer/commit/3dcaa5d6b81144747f75b179de68c9d6ab4da9a3))
+
 # [1.3.0](https://github.com/molvqingtai/timer/compare/v1.2.1...v1.3.0) (2024-12-08)
 
 

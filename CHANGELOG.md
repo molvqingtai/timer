@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/molvqingtai/timer/compare/v1.3.1...v1.3.2) (2025-02-19)
+
+
+### Performance Improvements
+
+* remove redundant code ([5e43abf](https://github.com/molvqingtai/timer/commit/5e43abfa52ed1f1c05ea2fdc7994ffe94495068f))
+
 ## [1.3.1](https://github.com/molvqingtai/timer/compare/v1.3.0...v1.3.1) (2024-12-14)
 
 

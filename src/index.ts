@@ -36,7 +36,6 @@ export default class Timer {
   private timerId: number | null
   private limit: number
   private readonly initLimit: number
-  private readonly originalLimit: number
   private readonly interval: number
   private readonly includeAsyncTime: boolean
   public status: TimerStatus
@@ -48,7 +47,7 @@ export default class Timer {
     this.pausedTime = 0
     this.callback = callback
     this.timerId = null
-    this.initLimit = this.originalLimit = this.limit = options?.limit ?? Infinity
+    this.initLimit = this.limit = options?.limit ?? Infinity
     this.interval = options?.interval ?? 0
     this.includeAsyncTime = options?.includeAsyncTime ?? false
     this.immediate = options?.immediate ?? false
@@ -93,7 +92,7 @@ export default class Timer {
       this.pausedTime = 0
       this.limit === 0 && this.eventHub.emit('end', Date.now())
       this.adapter.cancelTimer(this.timerId!)
-      this.limit = this.originalLimit
+      this.limit = this.initLimit
       this.timerId = null
     }
   }
